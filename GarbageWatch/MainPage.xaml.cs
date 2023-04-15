@@ -45,6 +45,12 @@ public partial class MainPage : ContentPage
 
     private async void DetectGarbageButton_Clicked(object sender, EventArgs e)
     {
+        if(String.IsNullOrEmpty(filePath))
+        {
+            await DisplayAlert("No Image Found", "Please click a picture first", "Ok");
+            return;
+        }
+
         GarbageDetectionService garbageDetectionService = new GarbageDetectionService(filePath);
 
         List<string> detectedItems = await garbageDetectionService.DetectGarbage();
