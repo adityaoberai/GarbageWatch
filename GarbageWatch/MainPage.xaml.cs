@@ -1,4 +1,6 @@
-﻿namespace GarbageWatch;
+﻿using GarbageWatch.Services;
+
+namespace GarbageWatch;
 
 public partial class MainPage : ContentPage
 {
@@ -43,7 +45,34 @@ public partial class MainPage : ContentPage
 
     private async void DetectGarbageButton_Clicked(object sender, EventArgs e)
     {
-        await DisplayAlert("Button Pressed", "Works", "Ok");
+        GarbageDetectionService garbageDetectionService = new GarbageDetectionService(filePath);
+
+        List<string> detectedItems = await garbageDetectionService.DetectGarbage();
+        
+        string items = "";
+        foreach (var tag in detectedItems)
+        {
+            items += $"{tag}\n";
+        }
+
+        if (detectedItems.Contains("trash") || detectedItems.Contains("garbage"))
+        {
+            await DisplayAlert("Garbage Detected", "Share this picture with the concerned municipal authorities", "Ok");
+
+            var location = await LocationService.GetCurrentLocation();
+
+            await Share.Default.RequestAsync(new ShareFileRequest
+            {
+                Title = $"Garbage detected publicly at coordinates ({location.Latitude},{location.Longitude})\n\nPlease check and have it cleaned up <Tag Local Municipal Authority>",
+                File = new ShareFile(filePath),
+                
+            });
+
+        }
+        else
+        {
+            await DisplayAlert("Garbage Not Detected", $"List of items detected instead:\n\n{items}", "Ok");
+        }
     }
 }
 
