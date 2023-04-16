@@ -63,7 +63,7 @@ public partial class MainPage : ContentPage
 
         if (detectedItems.Contains("trash") || detectedItems.Contains("garbage"))
         {
-            await DisplayAlert("Garbage Detected", "Share this picture with the concerned municipal authorities", "Ok");
+            await DisplayAlert("Garbage Detected", $"List of items detected:\n{items}\n\nShare this picture with the concerned municipal authorities", "Ok");
 
             var location = await LocationService.GetCurrentLocation();
 
